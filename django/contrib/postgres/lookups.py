@@ -49,6 +49,7 @@ class HasAnyKeys(HasKeys):
 class IsFinite(Transform):
     lookup_name = 'isfinite'
     function = 'ISFINITE'
+    output_field = models.BooleanField()
 
 
 class Unaccent(Transform):

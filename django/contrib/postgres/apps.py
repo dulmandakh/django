@@ -6,11 +6,11 @@ from django.apps import AppConfig
 from django.db import connections
 from django.db.backends.signals import connection_created
 from django.db.migrations.writer import MigrationWriter
-from django.db.models import CharField, TextField
+from django.db.models import CharField, DateField, TextField
 from django.test.signals import setting_changed
 from django.utils.translation import gettext_lazy as _
 
-from .lookups import SearchLookup, TrigramSimilar, Unaccent
+from .lookups import IsFinite, SearchLookup, TrigramSimilar, Unaccent
 from .serializers import RangeSerializer
 from .signals import register_type_handlers
 
@@ -24,6 +24,7 @@ def uninstall_if_needed(setting, value, enter, **kwargs):
     """
     if not enter and setting == 'INSTALLED_APPS' and 'django.contrib.postgres' not in set(value):
         connection_created.disconnect(register_type_handlers)
+        DateField._unregister_lookup(IsFinite)
         CharField._unregister_lookup(Unaccent)
         TextField._unregister_lookup(Unaccent)
         CharField._unregister_lookup(SearchLookup)
@@ -57,6 +58,7 @@ class PostgresConfig(AppConfig):
                 if conn.connection is not None:
                     register_type_handlers(conn)
         connection_created.connect(register_type_handlers)
+        DateField.register_lookup(IsFinite)
         CharField.register_lookup(Unaccent)
         TextField.register_lookup(Unaccent)
         CharField.register_lookup(SearchLookup)

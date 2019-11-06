@@ -297,7 +297,7 @@ class TestQueryingWithRanges(PostgreSQLTestCase):
         now = timezone.now()
         objs = [
             RangesModel.objects.create(dates=DateRange(None, now.date())),
-            RangesModel.objects.create(dates=DateRange(now.date() - datetime.timedelta(days=1), now.date()),
+            RangesModel.objects.create(dates=DateRange(now.date() - datetime.timedelta(days=1), now.date())),
         ]
         self.assertSequenceEqual(
             RangesModel.objects.filter(dates__startswith__isfinite=True),
